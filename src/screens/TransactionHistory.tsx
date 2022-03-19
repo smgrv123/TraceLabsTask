@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment";
 import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
 function TransactionHistory() {
+
+  const { type } = useParams();
+  console.log(type,'type')
 
   const [balance, setbalance] = useState(0);
   const [transactions, settransactions] = useState<any[] | null>(null);
@@ -11,14 +15,14 @@ function TransactionHistory() {
   const { walletAddress } = useSelector((state: any) => state.wallet);
     const  blockNumber  = useSelector((state: any) => state.block.blockNumbers);
 
-  const ETH_API = "https://api.etherscan.io/api?module=account";
+  const ETH_API = "https://api-rinkeby.etherscan.io/api?module=account";
   const apiKey = "G8NCNPZTFXSY1MX63DQ9ZNQGXNXAA94BZJ";
 
   useEffect(() => {
     // 0x00000000219ab540356cBB839Cbe05303d7705Fa
     axios
       .get(
-        `${ETH_API}&action=txlist&address=${walletAddress}&startblock=${blockNumber}&page=1&offset=10&sort=asc&apikey=${apiKey}`
+        `${ETH_API}&action=txlist&address=${walletAddress}&startblock=${blockNumber}&page=1&offset=10&sort=desc&apikey=${apiKey}`
       )
       .then((res: any) => {
         console.log("yes", res.data.result);
@@ -48,7 +52,7 @@ function TransactionHistory() {
             return (
               <li key={transaction.hash}>
                 <h3>{transaction.hash}</h3>
-                <p>{moment(parseInt(transaction.timeStamp)).format("DD MM YYYY")}</p>
+                <p>{moment(parseInt(transaction.timeStamp)*1000).format("DD MM YYYY")}</p>
                 <p>{parseInt(transaction.value)/Math.pow(10,18)}</p>
               </li>
             );

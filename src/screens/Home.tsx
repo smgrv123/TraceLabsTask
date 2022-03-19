@@ -14,7 +14,7 @@ function Home() {
     <div>
       <input placeholder="Enter wallet address" onChange={(e: any) => setwallet(e.target.value)} />
       <input placeholder="Enter Block Number" onChange={(e: any) => setblock(e.target.value)} />
-      <Link to={'/transactionHistory'} >
+      <Link to={'/selectType'} >
         <button
           onClick={() => {
             dispatch(setBlockNumbers(block));
