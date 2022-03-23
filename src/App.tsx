@@ -1,10 +1,10 @@
-import './App.css';
-import Home from './screens/Home';
+import "./App.css";
+import Home from "./screens/Home";
 
 function App() {
   return (
-    <div className="App">
-      <Home/>
+    <div className="bg-zinc-100 min-h-screen font-sans min-w-full flex flex-col">
+      <Home />
     </div>
   );
 }
