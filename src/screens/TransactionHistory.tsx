@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import Axios from "axios";
 import moment from "moment";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -18,7 +18,7 @@ function TransactionHistory() {
 
   const apiURL = type === "matic" ? "api.polygonscan.com" : "api.etherscan.io";
 
-  const API = `https://${apiURL}/api?module=account`;
+  const API = `https://${apiURL}/api?`;
   const apiKey =
     type === "matic"
       ? "JZE7N6P9FJQT2IPGZRUBV6JGQXA57FSZ71"
@@ -26,10 +26,15 @@ function TransactionHistory() {
 
   useEffect(() => {
     // 0x00000000219ab540356cBB839Cbe05303d7705Fa
-    axios
-      .get(
-        `${API}&action=txlist&address=${walletAddress}&startblock=${blockNumber}&page=${pagenumber}&offset=5&sort=desc&apikey=${apiKey}`
-      )
+    console.log(`${API}module=stats&action=ethprice&apikey=${apiKey}`);
+
+    Axios.get(`${API}module=stats&action=ethprice&apikey=${apiKey}`)
+      .then((res: any) => console.log("res", res))
+      .catch((err: any) => console.log("error", err));
+
+    Axios.get(
+      `${API}module=account&action=txlist&address=${walletAddress}&startblock=${blockNumber}&page=${pagenumber}&offset=5&sort=desc&apikey=${apiKey}`
+    )
       .then((res: any) => {
         console.log("yes", res.data.result);
         if (res.data.message === "OK") {
@@ -40,14 +45,12 @@ function TransactionHistory() {
         console.log("err", err);
       });
 
-    axios
-      .get(
-        `${API}&action=balance&address=${walletAddress}&tag=latest&apikey=${apiKey}`
-      )
-      .then((res: any) => {
-        setbalance(res.data.result / Math.pow(10, 18));
-      });
-      setloading(false);
+    Axios.get(
+      `${API}module=account&action=balance&address=${walletAddress}&tag=latest&apikey=${apiKey}`
+    ).then((res: any) => {
+      setbalance(res.data.result / Math.pow(10, 18));
+    });
+    setloading(false);
   }, [pagenumber]);
 
   if (!loading) {
@@ -84,11 +87,22 @@ function TransactionHistory() {
         {transactions && (
           <ul className="w-1/2 flex flex-col justify-center items-center">
             {transactions?.map((transaction: any) => {
+              console.log(
+                transaction.to === walletAddress.toLowerCase(),
+                walletAddress.toLowerCase()
+              );
               return (
                 <li
                   className="my-5 bg-blue-100 w-full flex flex-col items-center justify-center rounded-md py-5"
                   key={transaction.hash}
                 >
+                  <div
+                    className={
+                      transaction.to === walletAddress.toLowerCase()
+                        ? "h-2 w-8 bg-red-500 self-start ml-10 rounded-md"
+                        : "h-2 w-8 bg-green-500 self-start ml-10 rounded-md"
+                    }
+                  />
                   <p className="font-bold">Txn Hash : {transaction.hash}</p>
                   <p>
                     Date :{" "}
